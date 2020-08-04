@@ -9,7 +9,7 @@ import com.example.locationtestdi.R
 @Database(entities = [LocationEntity::class], version = 1, exportSchema = false)
 abstract class LocationRoomDB: RoomDatabase() { // The actual Room DB is created here...
 
-    abstract fun dao(): LocationDao
+    abstract fun getDao(): LocationDao
 
     companion object {
         @Volatile

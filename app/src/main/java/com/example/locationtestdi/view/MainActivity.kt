@@ -72,6 +72,12 @@ class MainActivity : AppCompatActivity(),
             }
         )
         viewModel.requestPermission(this)
+
+        toolbar_icon_expand.setOnClickListener {
+            linear_layout.visibility = View.VISIBLE
+            toolbar_icon_expand.visibility = View.GONE
+//                if (linear_layout.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+        }
     }
 
     // This callback is triggered when the map is ready to be used
@@ -124,6 +130,10 @@ class MainActivity : AppCompatActivity(),
         val lat: String = et_lat.text.toString()
         val lng: String = et_lng.text.toString()
         val name: String = et_name.text.toString()
+
+        linear_layout.visibility = View.GONE
+        toolbar_icon_expand.visibility = View.VISIBLE
+
         viewModel.isValidDouble(lat, lng, name)
         et_lat.text.clear()
         et_lng.text.clear()

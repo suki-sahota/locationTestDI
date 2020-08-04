@@ -4,18 +4,37 @@ import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
+import android.location.Location
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.locationtestdi.LocationApp
+import com.example.locationtestdi.model.LocationEntity
+import com.example.locationtestdi.model.LocationRoomDB
 import com.example.locationtestdi.model.LocatorManager
 import com.google.android.gms.maps.model.LatLng
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 /*
  * Data container for lat and long
  * Future -> Favorite Places
  */
-class LocationViewModel(val context: Context, val locatorManager: LocatorManager): ViewModel() {
+class LocationViewModel(val context: Context,
+                        val locatorManager: LocatorManager
+//                        val locationRoomDB2: LocationRoomDB // Using field injection instead
+): ViewModel() {
+
+    @Inject
+    lateinit var locationRoomDB: LocationRoomDB
+
+    init {
+        LocationApp.component.injectViewModel(this)
+    }
 
     private val dataSet = MutableLiveData<AppState>()
 
@@ -101,14 +120,30 @@ class LocationViewModel(val context: Context, val locatorManager: LocatorManager
      * Store Pair<LatLng, String> in LocationRoomDB
      */
     private fun saveFavoritePlaces(pair: Pair<LatLng, String>) {
-        // TODO (put in LocationRoomDB)
+        val favoritePlace = LocationEntity(
+            0,
+            pair.first.latitude,
+            pair.first.longitude,
+            pair.second
+        )
+        viewModelScope.launch {
+            locationRoomDB.getDao().newFavoritePlace(favoritePlace)
+        }
     }
 
     /*
      * Query Room to get Pair<LatLng, String>
      */
     private fun getAllFavoritesPlaces() {
-        // TODO
+        viewModelScope.launch {
+            val listOfData = mutableListOf<LocationEntity>()
+            withContext(Dispatchers.Main) {
+                listOfData.addAll(locationRoomDB.getDao().getFavoritePlaces())
+            }
+            dataSet.value = AppState.SearchedResponse(
+                listOfData.map { Pair(LatLng(it.lat, it.lng), it.place) }
+            )
+        }
     }
 
     fun getDataFromRepository(dataSet: List<Pair<LatLng, String>>) {
