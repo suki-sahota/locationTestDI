@@ -7,7 +7,7 @@ import dagger.Module
 import dagger.Provides
 
 @Module
-class LocationViewModelModule {
+class LocationViewModelModule { // This is actually the "LocationViewModelProviderModule"
     @Provides
     fun providesLocationViewModelProvider(context: Context, locatorManager: LocatorManager): LocationViewModelProvider =
         LocationViewModelProvider(context, locatorManager)

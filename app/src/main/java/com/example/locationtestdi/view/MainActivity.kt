@@ -35,9 +35,9 @@ class MainActivity : AppCompatActivity(),
     @Inject lateinit var locatorManager: LocatorManager
     @Inject lateinit var viewModelProvider: LocationViewModelProvider
 
-//    val sf = LatLng(37.7749, -122.4194) // San Francisco
-//    val ny = LatLng(40.73, -73.99)  // New York City
-//    val berk = LatLng(37.87, -122.27) // Berkeley
+//    val sf = LatLng(37.7749, -122.4194) // San Francisco, CA
+//    val ny = LatLng(40.73, -73.99)  // New York City, NY
+//    val berk = LatLng(37.87, -122.27) // Berkeley, CA
     private lateinit var mMap: GoogleMap
     private lateinit var viewModel: LocationViewModel
 
@@ -57,10 +57,10 @@ class MainActivity : AppCompatActivity(),
             Observer {
                 when (it) {
                     is LocationViewModel.AppState.LocationResponse -> {
-                        placeCurrentLocation(it.currentLocation[0])
+                        it.currentLocation.forEach { location -> placeCurrentLocation(location) }
                     }
                     is LocationViewModel.AppState.SearchedResponse -> {
-                        dropPinOnMap(it.favoritePlaces[0])
+                        it.favoritePlaces.forEach { location -> dropPinOnMap(location) }
                     }
                     is LocationViewModel.AppState.InfoMessage -> {
                         Toast.makeText(this, it.infoMessage, Toast.LENGTH_SHORT).show()
@@ -73,10 +73,10 @@ class MainActivity : AppCompatActivity(),
         )
         viewModel.requestPermission(this)
 
+        // To show the EditText fields
         toolbar_icon_expand.setOnClickListener {
             linear_layout.visibility = View.VISIBLE
             toolbar_icon_expand.visibility = View.GONE
-//                if (linear_layout.visibility == View.VISIBLE) View.GONE else View.VISIBLE
         }
     }
 
@@ -85,9 +85,7 @@ class MainActivity : AppCompatActivity(),
         mMap = googleMap // Lately initialize here...
         mMap.uiSettings.isZoomControlsEnabled = true
         mMap.setOnMarkerClickListener(this)
-        mMap.mapType = GoogleMap.MAP_TYPE_HYBRID // Hybrid
-//        mMap.mapType = GoogleMap.MAP_TYPE_SATELLITE
-//        mMap.mapType = GoogleMap.MAP_TYPE_TERRAIN
+        mMap.mapType = GoogleMap.MAP_TYPE_HYBRID // Hybrid, Satellite, Terrain, etc.
     }
 
     // Callback for when user responds to permission request
@@ -125,7 +123,7 @@ class MainActivity : AppCompatActivity(),
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(newLocation.first, 12f))
     }
 
-    // Drop pin and navigate to new location
+    // Send user input to the [Custom]ViewModel
     fun goNewLocation(view: View) {
         val lat: String = et_lat.text.toString()
         val lng: String = et_lng.text.toString()
@@ -135,13 +133,13 @@ class MainActivity : AppCompatActivity(),
         toolbar_icon_expand.visibility = View.VISIBLE
 
         viewModel.isValidDouble(lat, lng, name)
+
         et_lat.text.clear()
         et_lng.text.clear()
         et_name.text.clear()
-        val imm: InputMethodManager =
+        val imm: InputMethodManager = // Hide the soft keyboard
             getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view.windowToken, 0)
-
     }
 
     override fun onMarkerClick(p0: Marker?): Boolean = false

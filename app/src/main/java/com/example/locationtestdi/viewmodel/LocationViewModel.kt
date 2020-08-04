@@ -4,7 +4,6 @@ import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
-import android.location.Location
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -21,16 +20,16 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 /*
- * Data container for lat and long
+ * Data container for lat and lng
  * Future -> Favorite Places
  */
 class LocationViewModel(val context: Context,
                         val locatorManager: LocatorManager
-//                        val locationRoomDB2: LocationRoomDB // Using field injection instead
+//                        val locationRoomDB2: LocationRoomDB // Using field injection instead of constructor injection
 ): ViewModel() {
 
     @Inject
-    lateinit var locationRoomDB: LocationRoomDB
+    lateinit var locationRoomDB: LocationRoomDB // This is called a field injection
 
     init {
         LocationApp.component.injectViewModel(this)
@@ -62,15 +61,15 @@ class LocationViewModel(val context: Context,
             dataSet.value = AppState.InfoMessage("Location permission is turned off")
             return // Exits function if ACCESS_FINE_LOCATION is not permitted
         }
-        getLocationFromUI()
+        getLocationFromModel()
     }
 
     fun permissionGranted() {
-        getLocationFromUI()
+        getLocationFromModel()
         dataSet.value = AppState.InfoMessage("Location permission is turned on")
     }
 
-    private fun getLocationFromUI() { // Callback from LocatorManager (Model)
+    private fun getLocationFromModel() { // Callback from LocatorManager (Model)
         locatorManager.getLastLocation { location ->
             dataSet.value = AppState.LocationResponse(listOf(location)) // .value triggers an onChange in Activity
         }
@@ -117,7 +116,7 @@ class LocationViewModel(val context: Context,
     }
 
     /*
-     * Store Pair<LatLng, String> in LocationRoomDB
+     * Store Pair<LatLng, String> in LocationRoomDB as [Custom]Entity
      */
     private fun saveFavoritePlaces(pair: Pair<LatLng, String>) {
         val favoritePlace = LocationEntity(
@@ -132,9 +131,9 @@ class LocationViewModel(val context: Context,
     }
 
     /*
-     * Query Room to get Pair<LatLng, String>
+     * Query [Custom]RoomDB to get all [Custom]Entity's and transform to Pair<LatLng, String>
      */
-    private fun getAllFavoritesPlaces() {
+    private fun getAllFavoritesPlaces() { // This method goes unused...
         viewModelScope.launch {
             val listOfData = mutableListOf<LocationEntity>()
             withContext(Dispatchers.Main) {
@@ -144,10 +143,6 @@ class LocationViewModel(val context: Context,
                 listOfData.map { Pair(LatLng(it.lat, it.lng), it.place) }
             )
         }
-    }
-
-    fun getDataFromRepository(dataSet: List<Pair<LatLng, String>>) {
-        this.dataSet.value = AppState.SearchedResponse(dataSet) // .value triggers an onChange in Activity
     }
 
     companion object {

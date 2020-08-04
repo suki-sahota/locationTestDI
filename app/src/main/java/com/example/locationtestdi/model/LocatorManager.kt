@@ -12,12 +12,9 @@ import com.google.android.gms.maps.model.LatLng
  */
 class LocatorManager(val context: Context) {
 
-    lateinit var callback: (position: LatLng) -> Unit
-    private lateinit var fusedLocationClient: FusedLocationProviderClient // For illustrative purposes only
-
-    init {
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-    }
+    private val fusedLocationClient: FusedLocationProviderClient =
+        LocationServices.getFusedLocationProviderClient(context)
+//    lateinit var callback: (position: LatLng) -> Unit
 
 //    fun onBind(callback: (position: LatLng) -> Unit) {
 //        this.callback = callback

@@ -14,8 +14,7 @@ class LocationRoomDBModule {
     @Singleton
     fun providesLocationRoomDB(context: Context): LocationRoomDB {
         return Room
-            .databaseBuilder(context, LocationRoomDB::class.java,
-                context.getString(R.string.db_name))
+            .databaseBuilder(context, LocationRoomDB::class.java, context.getString(R.string.db_name))
             .build()
     }
 }

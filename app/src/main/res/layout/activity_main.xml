@@ -23,22 +23,22 @@
                 android:id="@+id/et_lat"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/hint_lat"
-                android:autofillHints="autofillHints Latitude" />
+                android:autofillHints="autofillHints Latitude"
+                android:hint="@string/hint_lat" />
 
             <EditText
                 android:id="@+id/et_lng"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/hint_lng"
-                android:autofillHints="autofillHints Longitude" />
+                android:autofillHints="autofillHints Longitude"
+                android:hint="@string/hint_lng" />
 
             <EditText
                 android:id="@+id/et_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/hint_name"
-                android:autofillHints="autofillHints Longitude" />
+                android:autofillHints="autofillHints Longitude"
+                android:hint="@string/hint_name" />
 
             <Button
                 android:id="@+id/btn_locate"
