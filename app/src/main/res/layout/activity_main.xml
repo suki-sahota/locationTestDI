@@ -21,14 +21,21 @@
                 android:id="@+id/et_lat"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Latitude"
+                android:hint="@string/hint_lat"
                 android:autofillHints="autofillHints Latitude" />
 
             <EditText
-                android:id="@+id/et_lon"
+                android:id="@+id/et_lng"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Longitude"
+                android:hint="@string/hint_lng"
+                android:autofillHints="autofillHints Longitude" />
+
+            <EditText
+                android:id="@+id/et_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_name"
                 android:autofillHints="autofillHints Longitude" />
 
             <Button

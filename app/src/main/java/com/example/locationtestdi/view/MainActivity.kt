@@ -114,18 +114,20 @@ class MainActivity : AppCompatActivity(),
     }
 
     // Drop new pin on map
-    private fun dropPinOnMap(newLocation: LatLng) {
-        mMap.addMarker(MarkerOptions().position(newLocation).title("Location Marker"))
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(newLocation, 12f))
+    private fun dropPinOnMap(newLocation: Pair<LatLng, String>) {
+        mMap.addMarker(MarkerOptions().position(newLocation.first).title(newLocation.second))
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(newLocation.first, 12f))
     }
 
     // Drop pin and navigate to new location
     fun goNewLocation(view: View) {
         val lat: String = et_lat.text.toString()
-        val lng: String = et_lon.text.toString()
-        viewModel.isValidDouble(lat, lng)
+        val lng: String = et_lng.text.toString()
+        val name: String = et_name.text.toString()
+        viewModel.isValidDouble(lat, lng, name)
         et_lat.text.clear()
-        et_lon.text.clear()
+        et_lng.text.clear()
+        et_name.text.clear()
         val imm: InputMethodManager =
             getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view.windowToken, 0)

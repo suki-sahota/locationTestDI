@@ -2,4 +2,7 @@
     <string name="app_name">locationTestDI</string>
     <string name="title_activity_maps">Map</string>
     <string name="db_name">location_db</string>
+    <string name="hint_lat">Latitude</string>
+    <string name="hint_lng">Longitude</string>
+    <string name="hint_name">Name of Marker</string>
 </resources>

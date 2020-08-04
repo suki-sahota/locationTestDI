@@ -21,7 +21,7 @@ class LocationViewModel(val context: Context, val locatorManager: LocatorManager
 
     sealed class AppState { // Holds the current application state
         data class LocationResponse(val currentLocation: List<LatLng>): AppState() // Current Location
-        data class SearchedResponse(val favoritePlaces: List<LatLng>): AppState() // Some Searched Location
+        data class SearchedResponse(val favoritePlaces: List<Pair<LatLng, String>>): AppState() // Some Searched Locations
         data class InfoMessage(val infoMessage: String): AppState() // Confirmation for Room insertion
         data class ErrorMessage(val errorMessage: String): AppState() // Invalid Coordinates
     }
@@ -57,7 +57,7 @@ class LocationViewModel(val context: Context, val locatorManager: LocatorManager
         }
     }
 
-    fun isValidDouble(latitude: String, longitude: String) {
+    fun isValidDouble(latitude: String, longitude: String, name: String) {
         val lat: Double? = latitude.toDoubleOrNull()
         val lng: Double? = longitude.toDoubleOrNull()
         if (lat == null || lng == null) {
@@ -67,51 +67,51 @@ class LocationViewModel(val context: Context, val locatorManager: LocatorManager
         } else if (lngNotValid(lng)) {
             dataSet.value = AppState.ErrorMessage("The value you entered for longitude is out of bounds!")
         } else {
-            getLocationFromUI(lat, lng) // Smart cast because of if statement
+            getLocationFromUI(lat, lng, name) // Smart cast because of if statement
         }
     }
 
     private fun latNotValid(num: Double): Boolean {
-        if (num < -90 || num > 90) return true
+        if (num < -90 || num > 90) return true // Not valid
         return false // Valid
     }
 
     private fun lngNotValid(num: Double): Boolean {
-        if (num < -180 || num > 180) return true
+        if (num < -180 || num > 180) return true // Not valid
         return false // Valid
     }
 
     /*
      * Create a LatLng from Maps EditText
      */
-    private fun getLocationFromUI(lat: Double, lng: Double) {
-        val latLng = LatLng(lat, lng)
+    private fun getLocationFromUI(lat: Double, lng: Double, name: String) {
+        val pair: Pair<LatLng, String> = Pair(LatLng(lat, lng), name)
         // Option 1
-        with (latLng) {
+        with (pair) {
             dataSet.value = AppState.SearchedResponse(listOf(this)) // .value triggers an onChange in Activity
         }
 //        // Option 2
-//        latLng.apply {
+//        pair.apply {
 //            dataSet.value = AppState.SearchedResponse(listOf(this))
 //        }
-        saveFavoritePlaces(latLng)
+        saveFavoritePlaces(pair)
     }
 
     /*
-     * Store in Room the Favorite
+     * Store Pair<LatLng, String> in LocationRoomDB
      */
-    private fun saveFavoritePlaces(position: LatLng) {
-        // TODO
+    private fun saveFavoritePlaces(pair: Pair<LatLng, String>) {
+        // TODO (put in LocationRoomDB)
     }
 
     /*
-     * Query Room to get LatLng
+     * Query Room to get Pair<LatLng, String>
      */
     private fun getAllFavoritesPlaces() {
         // TODO
     }
 
-    fun getDataFromRepository(dataSet: List<LatLng>) {
+    fun getDataFromRepository(dataSet: List<Pair<LatLng, String>>) {
         this.dataSet.value = AppState.SearchedResponse(dataSet) // .value triggers an onChange in Activity
     }
 
